@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alpaca-prod
+  labels:
+    app: alpaca
+    env: prod
+    ver: "1"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: alpaca
+      env: prod
+      ver: "1"
+  template:
+    metadata:
+      labels:
+        app: alpaca
+        env: prod
+        ver: "1"
+    spec:
+      containers:
+      - name: kuard
+        image: gcr.io/kuar-demo/kuard-amd64:blue
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alpaca-test
+  labels:
+    app: alpaca
+    env: test
+    ver: "2"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alpaca
+      env: test
+      ver: "2"
+  template:
+    metadata:
+      labels:
+        app: alpaca
+        env: test
+        ver: "2"
+    spec:
+      containers:
+      - name: kuard
+        image: gcr.io/kuar-demo/kuard-amd64:green
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bandicoot-prod
+  labels:
+    app: bandicoot
+    env: prod
+    ver: "2"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bandicoot
+      env: prod
+      ver: "2"
+  template:
+    metadata:
+      labels:
+        app: bandicoot
+        env: prod
+        ver: "2"
+    spec:
+      containers:
+      - name: kuard
+        image: gcr.io/kuar-demo/kuard-amd64:green
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bandicoot-staging
+  labels:
+    app: bandicoot
+    env: staging
+    ver: "2"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bandicoot
+      env: staging
+      ver: "2"
+  template:
+    metadata:
+      labels:
+        app: bandicoot
+        env: staging
+        ver: "2"
+    spec:
+      containers:
+      - name: kuard
+        image: gcr.io/kuar-demo/kuard-amd64:green
+
