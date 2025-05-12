@@ -9267,11 +9267,11 @@ metadata:
 spec:
   externalTrafficPolicy: Local
   ports:
-  - port: 80
+  - port: 3080
     name: http
     protocol: TCP
     targetPort: 8080
-  - port: 443
+  - port: 30443
     name: https
     protocol: TCP
     targetPort: 8443
