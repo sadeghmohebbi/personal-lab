@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: queue
+  labels:
+    app: work-queue
+    component: queue
+    chapter: jobs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: work-queue
+      component: queue
+      chapter: jobs
+  template:
+    metadata:
+      labels:
+        app: work-queue
+        component: queue
+        chapter: jobs
+    spec:
+      containers:
+        - name: queue
+          image: "gcr.io/kuar-demo/kuard-amd64:blue"
+          imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: queue
+  labels:
+    app: work-queue
+    component: queue
+    chapter: jobs
+spec:
+  selector:
+    app: work-queue
+    component: queue
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: consumers
+  labels:
+    app: message-queue
+    component: consumer
+    chapter: jobs
+spec:
+  parallelism: 5
+  template:
+    metadata:
+      labels:
+        app: message-queue
+        component: consumer
+        chapter: jobs
+    spec:
+      containers:
+        - name: worker
+          image: "gcr.io/kuar-demo/kuard-amd64:blue"
+          imagePullPolicy: Always
+          args:
+            - "--keygen-enable"
+            - "--keygen-exit-on-complete"
+            - "--keygen-memq-server=http://queue:8080/memq/server"
+            - "--keygen-memq-queue=keygen"
+      restartPolicy: OnFailure
+

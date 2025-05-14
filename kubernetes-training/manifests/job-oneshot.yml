@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: oneshot
+spec:
+  template:
+    metadata:
+      labels:
+        job: oneshot
+    spec:
+      containers:
+        - name: busybox
+          image: busybox:1.36
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-c", "echo Hello from the test job! && sleep 2 && exit 1"]
+      restartPolicy: OnFailure
