@@ -4,8 +4,12 @@ metadata:
   name: kuard
 spec:
   containers:
-    - image: gcr.io/kuar-demo/kuard-amd64:blue
+    - image: gcr.io/kuar-demo/kuard-amd64:green
+      imagePullPolicy: Always
       name: kuard
+      envFrom:
+        - configMapRef:
+            name: my-config
       resources:
         requests:
           cpu: 500m
