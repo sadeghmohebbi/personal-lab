@@ -1,0 +1,26 @@
+tcp:
+  routers:
+    minio-router:
+      entryPoints:
+        - minio
+      rule: "HostSNI(`*`)"
+      service: minio-service
+    minio-console-router:
+      entryPoints:
+        - minio-console
+      rule: "HostSNI(`*`)"
+      service: minio-console-service
+
+  services:
+    minio-service:
+      loadBalancer:
+        servers:
+          - address: minio1:9000
+          - address: minio2:9000
+          - address: minio3:9000
+    minio-console-service:
+      loadBalancer:
+        servers:
+          - address: minio1:9001
+            #- address: minio2:9001
+            #- address: minio3:9001
