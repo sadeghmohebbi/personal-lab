@@ -24,4 +24,16 @@ spec:
           ports:
             - containerPort: 27017
               name: peer
-
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  namespace: sadeghns
+spec:
+  ports:
+    - port: 27017
+      name: peer
+  clusterIP: None
+  selector:
+    app: mongo
