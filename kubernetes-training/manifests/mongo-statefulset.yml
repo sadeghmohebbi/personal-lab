@@ -9,6 +9,17 @@ spec:
   selector:
     matchLabels:
       app: mongo
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-persistent-storage
+        annotations:
+          volume.alpha.kubernetes.io/storage-class: anything
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
   template:
     metadata:
       labels:
@@ -24,6 +35,9 @@ spec:
           ports:
             - containerPort: 27017
               name: peer
+          volumeMounts:
+            - name: mongo-persistent-storage
+              mountPath: /data/db
 ---
 apiVersion: v1
 kind: Service
@@ -37,3 +51,43 @@ spec:
   clusterIP: None
   selector:
     app: mongo
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mongo-init
+  namespace: sadeghns
+spec:
+  template:
+    spec:
+      containers:
+        - name: mongo-init
+          image: mongo:3.4.1
+          command:
+            - bash
+            - -c
+            - |
+              echo "Waiting for MongoDB to be ready..."
+              until mongo --host mongo-0.mongo --eval "print(\"waiting\")"
+              do
+                sleep 2
+              done
+
+              echo "Checking replica set status..."
+              STATUS=$(mongo --host mongo-0.mongo --quiet --eval "rs.status().ok" || echo "0")
+
+              if [ "$STATUS" != "1" ]; then
+                echo "Initiating replica set..."
+                mongo --host mongo-0.mongo --eval '
+                  rs.initiate({
+                    _id: "rs0",
+                    members: [
+                      { _id: 0, host: "mongo-0.mongo:27017" },
+                      { _id: 1, host: "mongo-1.mongo:27017" },
+                      { _id: 2, host: "mongo-2.mongo:27017" }
+                    ]
+                  })'
+              else
+                echo "Replica set already initialized."
+              fi
+      restartPolicy: OnFailure
