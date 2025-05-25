@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+  namespace: sadeghns
+spec:
+  serviceName: "mongo"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongodb
+          image: registry.sample.local/docker_proxy/mongo:3.4.1
+          command:
+            - mongod
+            - --replSet
+            - rs0
+          ports:
+            - containerPort: 27017
+              name: peer
+
