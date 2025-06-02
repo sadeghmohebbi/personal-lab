@@ -11,6 +11,8 @@
         mode: "0700"
 
 - name: Create replication user
+  hosts: all
+  become: true
   become_user: postgres
   tasks:
     - name: Create PostgreSQL Relicator User
