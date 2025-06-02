@@ -1,0 +1,21 @@
+- name: Stop PostgreSQL
+  service:
+    name: postgresql
+    state: stopped
+
+- name: Remove old PG data
+  file:
+    path: /var/lib/postgresql/14/main
+    state: absent
+
+- name: Clone primary using pg_basebackup
+  become_user: postgres
+  command: >
+    pg_basebackup -h {{ hostvars['vm1'].ansible_host }} -D /var/lib/postgresql/14/main -U replicator -Fp -Xs -P -R
+  environment:
+    PGPASSWORD: "replicator_pass"
+
+- name: Start PostgreSQL
+  service:
+    name: postgresql
+    state: started

@@ -1,0 +1,7 @@
+- name: Install keepalived
+  hosts: postgresql
+  become: yes
+  roles:
+    - keepalived
+  vars:
+    virtual_ipaddress: 172.27.232.5

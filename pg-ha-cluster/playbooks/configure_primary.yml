@@ -15,7 +15,7 @@
   become: true
   become_user: postgres
   tasks:
-    - name: Create PostgreSQL Relicator User
+    - name: Create PostgreSQL Replicator User
       community.postgresql.postgresql_user:
         name: replicator
         password: "replicator_pass"
