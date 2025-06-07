@@ -1,0 +1,54 @@
+- name: Install PostgreSQL and it's Python Library
+  ansible.builtin.apt:
+    name:
+      - postgresql
+      - postgresql-contrib
+      - python3-psycopg2
+      - libpq-dev
+    state: present
+    update_cache: true
+
+- name: Ensure PostgreSQL is started
+  ansible.builtin.service:
+    name: postgresql
+    state: started
+    enabled: true
+
+- name: Ensure postgresql.conf exists
+  ansible.builtin.file:
+    path: /etc/postgresql/16/main
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: "0700"
+
+- name: Create postgresql.conf if not exists
+  ansible.builtin.file:
+    path: /etc/postgresql/16/main/postgresql.conf
+    state: touch
+    owner: postgres
+    group: postgres
+    mode: "0600"
+
+- name: Create postgresql.conf if not exists
+  ansible.builtin.file:
+    path: /etc/postgresql/16/main/postgresql.conf
+    state: touch
+    owner: postgres
+    group: postgres
+    mode: "0600"
+
+- name: Create pg_hba.conf if not exists
+  ansible.builtin.file:
+    path: /etc/postgresql/16/main/pg_hba.conf
+    state: touch
+    owner: postgres
+    group: postgres
+    mode: "0600"
+
+- name: Configure PostgreSQL to listen on all interfaces
+  ansible.builtin.lineinfile:
+    path: /etc/postgresql/16/main/postgresql.conf
+    regexp: '^#?(listen_addresses)'
+    line: "listen_addresses = '*'"
+    state: present

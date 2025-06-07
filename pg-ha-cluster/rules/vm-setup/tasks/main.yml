@@ -1,0 +1,24 @@
+- name: Install requirements
+  ansible.builtin.apt:
+    name:
+      - acl
+    state: present
+    update_cache: true
+
+- name: Add extra host (1) to /etc/hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: 172.27.254.1 pgnode1-local
+    state: present
+
+- name: Add extra host (2) to /etc/hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: 172.27.254.2 pgnode2-local
+    state: present
+
+- name: Add extra host (3) to /etc/hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: 172.27.254.3 pgnode3-local
+    state: present

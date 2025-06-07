@@ -12,5 +12,5 @@ ansible -i pg-ha-cluster/inventory/hosts.ini primary -m ping -u=username --priva
 ```
 1. finally, run each playbook you want
 ```bash
-ansible-playbook -i pg-ha-cluster/inventory/hosts.ini -u=username --private-key=~/.ssh/your_key pg-ha-cluster/playbooks/configure_primary.yml
+ansible-playbook -i pg-ha-cluster/inventory/hosts.ini -u=username --private-key=~/.ssh/your_key path/to/playbook.yml
 ```

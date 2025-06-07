@@ -2,4 +2,4 @@
   hosts: postgresql
   become: true
   roles:
-    - postgres
+    - pg-setup

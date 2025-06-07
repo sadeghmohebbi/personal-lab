@@ -1,0 +1,11 @@
+# - name: Check Postgres
+#   hosts: postgresql
+#   become: true
+#   roles:
+#     - pg-ping
+
+- name: Check Postgres Cluster
+  hosts: primary
+  become: true
+  roles:
+    - pg-cluster-status
