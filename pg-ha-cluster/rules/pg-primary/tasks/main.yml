@@ -1,6 +1,7 @@
 - name: Configure postgresql.conf for replication
   ansible.builtin.blockinfile:
     path: /etc/postgresql/16/main/postgresql.conf
+    state: present
     block: |
       wal_level = replica
       max_wal_senders = 10

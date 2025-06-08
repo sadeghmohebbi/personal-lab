@@ -9,6 +9,8 @@
     state: absent
 
 - name: Clone data from primary
+  become: true
+  become_user: postgres
   ansible.builtin.command:
     cmd: "pg_basebackup -h {{ primary_host }} -D /var/lib/postgresql/16/main -U replicator -P -X stream"
     creates: /var/lib/postgresql/16/main
@@ -20,6 +22,15 @@
 - name: Debug Clone Output
   ansible.builtin.debug:
     var: clone_output
+
+- name: Ensure parent directory exists and owned by postgres
+  become: true
+  ansible.builtin.file:
+    path: /var/lib/postgresql/16
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: '0755'
 
 - name: Configure recovery.conf
   ansible.builtin.copy:
@@ -34,5 +45,5 @@
 
 - name: Start PostgreSQL
   ansible.builtin.service:
-    name: postgresql
+    name: postgresql@16-main.service
     state: started

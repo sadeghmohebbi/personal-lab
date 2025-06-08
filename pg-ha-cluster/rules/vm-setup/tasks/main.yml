@@ -2,6 +2,8 @@
   ansible.builtin.apt:
     name:
       - acl
+      - python3-psycopg2
+      - libpq-dev
     state: present
     update_cache: true
 
