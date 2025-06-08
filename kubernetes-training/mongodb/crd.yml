@@ -1,0 +1,9 @@
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  namespace: vote-app-ns
+  name: mongodb-test
+spec:
+  members: 3
+  type: ReplicaSet
+  version: 6
