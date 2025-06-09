@@ -30,6 +30,7 @@
     path: "{{ pg_conf_dir }}/postgresql.conf"
     regexp: '^#?listen_addresses =.*'
     line: "listen_addresses = '{{ postgres_listen_address }}'"
+    state: present
   notify: Restart PostgreSQL
 
 - name: Set PostgreSQL port
@@ -37,6 +38,7 @@
     path: "{{ pg_conf_dir }}/postgresql.conf"
     regexp: '^#?port =.*'
     line: "port = {{ postgres_port }}"
+    state: present
   notify: Restart PostgreSQL
 
 - name: Allow all hosts in pg_hba.conf (for testing)
@@ -44,5 +46,24 @@
     path: "{{ pg_conf_dir }}/pg_hba.conf"
     line: "host    all             all             0.0.0.0/0               md5"
     insertafter: EOF
+    state: present
+  notify: Restart PostgreSQL
+
+- name: Allow replication connections in pg_hba.conf
+  lineinfile:
+    path: /etc/postgresql/{{ postgres_version }}/main/pg_hba.conf
+    line: "host    replication     {{ replication_user }}     172.27.254.0/24     md5"
+    state: present
+    insertafter: EOF
+
+- name: Set wal_level and replication settings
+  ansible.builtin.blockinfile:
+    path: "{{ pg_conf_dir }}/postgresql.conf"
+    marker: "# {mark} ANSIBLE REPLICATION"
+    block: |
+      wal_level = replica
+      max_wal_senders = 10
+      wal_keep_size = 64MB
+      hot_standby = on
     state: present
   notify: Restart PostgreSQL

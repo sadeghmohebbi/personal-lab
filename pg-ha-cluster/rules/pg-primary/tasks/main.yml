@@ -1,29 +1,16 @@
-- name: Configure postgresql.conf for replication
-  ansible.builtin.blockinfile:
-    path: /etc/postgresql/16/main/postgresql.conf
-    state: present
-    block: |
-      wal_level = replica
-      max_wal_senders = 10
-      max_replication_slots = 10
-      hot_standby = on
-
-- name: Configure pg_hba.conf for replication
-  ansible.builtin.lineinfile:
-    path: /etc/postgresql/16/main/pg_hba.conf
-    line: 'host replication replicator 0.0.0.0/0 md5'
-    state: present
-
-- name: Restart PostgreSQL (Debian-style instance unit)
-  ansible.builtin.service:
-    name: postgresql@16-main.service
-    state: restarted
-
-- name: Create replicator user with replication privileges
+- name: Create replication user
   become: true
   become_user: postgres
-  community.postgresql.postgresql_user:
-    name: replicator
-    password: "repl123456"
-    role_attr_flags: "LOGIN,REPLICATION"
-    state: present
+  ansible.builtin.shell: |
+    psql -c "DO \$\$
+    BEGIN
+      IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '{{ replication_user }}') THEN
+        CREATE ROLE {{ replication_user }} WITH REPLICATION LOGIN ENCRYPTED PASSWORD '{{ replication_password }}';
+      END IF;
+    END
+    \$\$;"
+
+- name: Restart PostgreSQL on primary
+  ansible.builtin.service:
+    name: postgresql@{{ postgres_version }}-main
+    state: restarted
