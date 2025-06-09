@@ -1,0 +1,25 @@
+- name: Stop PostgreSQL service
+  ansible.builtin.service:
+    name: postgresql@{{ postgres_version }}-main
+    state: stopped
+
+- name: Clear existing data directory
+  ansible.builtin.file:
+    path: "{{ postgres_data_dir }}"
+    state: absent
+
+- name: Create base backup from primary
+  become: true
+  become_user: postgres
+  ansible.builtin.shell: |
+    PGPASSWORD={{ replication_password }} pg_basebackup \
+      -h {{ primary_host }} -D {{ postgres_data_dir }} -U {{ replication_user }} \
+      -Fp -Xs -P -R
+  environment:
+    PGPASSWORD: "{{ replication_password }}"
+
+- name: Start PostgreSQL on standby
+  ansible.builtin.service:
+    name: postgresql@{{ postgres_version }}-main
+    state: started
+    enabled: yes
