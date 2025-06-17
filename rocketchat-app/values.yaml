@@ -1,12 +1,22 @@
-# Default values for rocketchat-app.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
 rocketchat:
+  image:
+    repository: registry.sample.local/docker_proxy/rocketchat/rocket.chat
+    tag: v7.7.1
+  host: rocketchat.sample.local
+  ingress:
+    enabled: true
+  service:
+    type: LoadBalancer
   mongodb:
     enabled: false
   postgresql:
     enabled: false
+  microservices:
+    enabled: false
 
+# Default values for rocketchat-app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
 
