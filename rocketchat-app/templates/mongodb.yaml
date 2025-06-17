@@ -1,0 +1,22 @@
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: mongodb
+  namespace: rocketchat-system
+spec:
+  members: 3
+  type: ReplicaSet
+  version: "6.0.4"
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users:
+    - name: admin
+      db: admin
+      passwordSecretRef:
+        name: admin-user
+      roles:
+        - name: root
+          db: admin
+  tls:
+    enabled: false
