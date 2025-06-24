@@ -1,5 +1,0 @@
-- name: Setup Virtual Machines
-  hosts: postgresql
-  become: true
-  roles:
-    - vm-setup

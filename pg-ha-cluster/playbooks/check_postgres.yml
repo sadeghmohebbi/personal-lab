@@ -1,5 +1,0 @@
-- name: Check Postgres Cluster
-  hosts: postgresql
-  become: true
-  roles:
-    - pg-cluster-status
